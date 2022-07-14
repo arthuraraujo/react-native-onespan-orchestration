@@ -2,6 +2,7 @@ buildscript {
   repositories {
       google()
       mavenCentral()
+      mavenLocal()
   }
 
   dependencies {
@@ -14,6 +15,7 @@ def isNewArchitectureEnabled() {
 }
 
 apply plugin: 'com.android.library'
+
 
 if (isNewArchitectureEnabled()) {
   apply plugin: 'com.facebook.react'
@@ -125,7 +127,30 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
+
+
+ implementation fileTree(dir: "libs", include: ["*.aar"])
+
+
 // From node_modules
+    implementation files('libs/sdk_orchestration_android:5.5.1.881')
+    implementation files('libs/sdk_digipass_android:4.30.0.614')
+    implementation files('libs/sdk_utilities_android:4.27.2.881')
+    implementation files('libs/sdk_cddc_android:4.25.2.654')
+    implementation files('libs/sdk_biometric_sensor_android:4.25.1.656')
+    implementation files('libs/sdk_dsapp_client_android:4.28.0.536')
+    implementation files('libs/sdk_device_binding_android:5.0.2.800')
+    implementation files('libs/sdk_secure_storage_android:4.28.0.862')
+
+// From mavenLocal()
+    // implementation 'com.onespan:sdk_orchestration_android:5.5.1.881'
+    // implementation 'com.onespan:sdk_digipass_android:4.30.0.614'
+    // implementation 'com.onespan:sdk_utilities_android:4.27.2.881'
+    // implementation 'com.onespan:sdk_cddc_android:4.25.2.654'
+    // implementation 'com.onespan:sdk_biometric_sensor_android:4.25.1.656'
+    // implementation 'com.onespan:sdk_dsapp_client_android:4.28.0.536'
+    // implementation 'com.onespan:sdk_device_binding_android:5.0.2.800'
+    // implementation 'com.onespan:sdk_secure_storage_android:4.28.0.862'
 }
 
 if (isNewArchitectureEnabled()) {
