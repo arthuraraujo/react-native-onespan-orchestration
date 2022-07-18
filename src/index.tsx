@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
 const { OnespanBridgeAndroid } = NativeModules;
 
@@ -29,6 +29,10 @@ export function setAccountIdentifier(a: string, b: string) {
 
 export function startActivation(a: string, b: string) {
   return OnespanBridgeAndroid.startActivation(a, b);
+}
+
+export function eventEmitter() {
+  return new NativeEventEmitter(OnespanBridgeAndroid);
 }
 
 // export function startActivation(a: string, b: string): void {
