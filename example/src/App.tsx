@@ -14,26 +14,25 @@ import {
 import {
   setAccountIdentifier,
   startActivation,
-  eventEmitter,
 } from 'react-native-onespan-orchestration';
 
 // const { OnespanBridgeAndroid } = NativeModules;
 
 const NewModuleButton = () => {
   const onSubmit = async () => {
-    const onStatusEvent = (event) => {
-      console.log(`event listener: ${event.status}`);
-    };
+    // const onStatusEvent = (event) => {
+    //   console.log(`event listener: ${event.status}`);
+    // };
     // created listener
     // const onStatusEvent = (event) => {
     //   console.log(`event listener: ${event.status}`);
     // };
 
     // const eventEmitter = new NativeEventEmitter(OnespanBridgeAndroid);
-    const subscription = eventEmitter.addListener(
-      'onStatusEvent',
-      onStatusEvent
-    );
+    // const subscription = eventEmitter.addListener(
+    //   'onStatusEvent',
+    //   onStatusEvent
+    // );
     // subscription.remove(); unsubscribe your listeners once they’re not needed anymore or you’ll end up leaking memory. Don’t forget that!
 
     // pass sandbox identification (sandbox user, cloud server url)
