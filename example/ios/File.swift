@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  OnespanOrchestrationExample
+//  OnespanBridgeAndroidExample
 //
 
 import Foundation

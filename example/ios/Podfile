@@ -4,7 +4,9 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'OnespanOrchestrationExample' do
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
+target 'OnespanBridgeAndroidExample' do
   config = use_native_modules!
 
   # Flags change depending on the env values.

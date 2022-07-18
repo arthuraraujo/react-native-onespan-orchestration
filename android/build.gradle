@@ -1,32 +1,38 @@
 buildscript {
+  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
+  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['OnespanBridgeAndroid_kotlinVersion']
+
   repositories {
-      google()
-      mavenCentral()
-      mavenLocal()
+    google()
+    mavenCentral()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.3'
+    classpath 'com.android.tools.build:gradle:4.2.2'
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
 def isNewArchitectureEnabled() {
-  return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
+  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
 }
 
 apply plugin: 'com.android.library'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 if (isNewArchitectureEnabled()) {
   apply plugin: 'com.facebook.react'
 }
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['OnespanOrchestration_' + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['OnespanBridgeAndroid_' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['OnespanOrchestration_' + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['OnespanBridgeAndroid_' + name]).toInteger()
 }
 
 android {
@@ -47,6 +53,7 @@ android {
     disable 'GradleCompatible'
   }
 
+
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
@@ -54,6 +61,8 @@ android {
 }
 
 repositories {
+  // change for correct local repository
+  // mavenLocal()
   mavenCentral()
   google()
 
@@ -118,45 +127,74 @@ repositories {
   if (!found) {
     throw new GradleException(
       "${project.name}: unable to locate React Native android sources. " +
-      "Ensure you have you installed React Native as a dependency in your project and try again."
+        "Ensure you have you installed React Native as a dependency in your project and try again."
     )
   }
 }
 
+def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
-    //noinspection GradleDynamicVersion
+  // necessaries dependencies
+  implementation 'androidx.core:core-ktx:1.8.0'
+  implementation 'androidx.appcompat:appcompat:1.4.2'
+  implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
+  implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
+  implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
+  implementation 'androidx.biometric:biometric:1.1.0'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+  implementation 'com.google.android.gms:play-services-location:20.0.0'
+
+  // koin
+  implementation 'io.insert-koin:koin-android:3.2.0'
+
+  //retrofit - gson - interceptor
+  implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+  implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+  implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+
+
+  // Local LIB
+  implementation fileTree(dir: "libs", include: ["*.aar"])
+
+
+  implementation files('libs/sdk_orchestration_android:5.5.1.881')
+  implementation files('libs/sdk_digipass_android:4.30.0.614')
+  implementation files('libs/sdk_utilities_android:4.27.2.881')
+  implementation files('libs/sdk_cddc_android:4.25.2.654')
+  implementation files('libs/sdk_biometric_sensor_android:4.25.1.656')
+  implementation files('libs/sdk_dsapp_client_android:4.28.0.536')
+  implementation files('libs/sdk_device_binding_android:5.0.2.800')
+  implementation files('libs/sdk_secure_storage_android:4.28.0.862')
+
+  // onespan sdks - maven local
+  // implementation 'com.onespan:sdk_biometric_sensor_android:4.25.1.656'
+  // implementation 'com.onespan:sdk_cddc_android:4.25.2.654'
+  // implementation 'com.onespan:sdk_device_binding_android:5.0.2.800'
+  // implementation 'com.onespan:sdk_digipass_android:4.30.0.614'
+  // implementation 'com.onespan:sdk_dsapp_client_android:4.28.0.536'
+  // implementation 'com.onespan:sdk_notification_client_android:4.29.2.728'
+  // implementation 'com.onespan:sdk_orchestration_android:5.5.1.881'
+  // implementation 'com.onespan:sdk_secure_storage_android:4.28.0.862'
+  // implementation 'com.onespan:sdk_utilities_android:4.27.2.881'
+
+  implementation 'com.esotericsoftware:kryo:5.3.0'
+  implementation 'org.bouncycastle:bcprov-ext-jdk15to18:1.70'
+
+  //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
+  implementation 'com.google.android.material:material:1.4.0'
+  implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+  // From node_modules
 
 
- implementation fileTree(dir: "libs", include: ["*.aar"])
-
-
-// From node_modules
-    implementation files('libs/sdk_orchestration_android:5.5.1.881')
-    implementation files('libs/sdk_digipass_android:4.30.0.614')
-    implementation files('libs/sdk_utilities_android:4.27.2.881')
-    implementation files('libs/sdk_cddc_android:4.25.2.654')
-    implementation files('libs/sdk_biometric_sensor_android:4.25.1.656')
-    implementation files('libs/sdk_dsapp_client_android:4.28.0.536')
-    implementation files('libs/sdk_device_binding_android:5.0.2.800')
-    implementation files('libs/sdk_secure_storage_android:4.28.0.862')
-
-// From mavenLocal()
-    // implementation 'com.onespan:sdk_orchestration_android:5.5.1.881'
-    // implementation 'com.onespan:sdk_digipass_android:4.30.0.614'
-    // implementation 'com.onespan:sdk_utilities_android:4.27.2.881'
-    // implementation 'com.onespan:sdk_cddc_android:4.25.2.654'
-    // implementation 'com.onespan:sdk_biometric_sensor_android:4.25.1.656'
-    // implementation 'com.onespan:sdk_dsapp_client_android:4.28.0.536'
-    // implementation 'com.onespan:sdk_device_binding_android:5.0.2.800'
-    // implementation 'com.onespan:sdk_secure_storage_android:4.28.0.862'
 }
 
 if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
-    libraryName = "OnespanOrchestration"
-    codegenJavaPackageName = "com.reactnativeonespanorchestration"
+    libraryName = "OnespanBridgeAndroid"
+    codegenJavaPackageName = "com.reactnativeonespanbridgeandroid"
   }
 }
