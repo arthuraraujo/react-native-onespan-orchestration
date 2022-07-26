@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
-import { Container, FormWrapper, Button } from './styles';
 import {
-  setAccountIdentifier,
-  startActivation,
-  eventEmitter,
-} from 'react-native-onespan-orchestration';
+  Container,
+  FormWrapper,
+  Button,
+  Eventbox,
+  View,
+  Text,
+  BoxText,
+  Spacer,
+} from './styles';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
-import { View, Text } from 'react-native';
+const { OnespanBridgeAndroid } = NativeModules;
+// import Input from '../components/Input';
+// import EventBox from '../components/EventBox';
 
 import { TextInput } from 'react-native-paper';
 
 const App = () => {
-  useEffect(() => {
-    const eE = eventEmitter;
-    const subscription = eE.addListener('onStatusEvent', onStatusEvent);
-    return () => subscription.remove();
-  }, []);
-
   const [accountIdentifierUser, setAccountIdentifierUser] = useState(
     'sybrandreinders-vort'
   );
@@ -29,19 +30,46 @@ const App = () => {
 
   const [isIdentified, setIsIdentified] = useState(false);
 
-  const { log, setLog } = useState([]);
+  const [log, setLog] = useState<string[]>([]);
 
-  const onStatusEvent = (event) => {
-    console.log(event.status);
-    // setLog([...log, event.status]);
+  let logLocal: string[] = [''];
+
+  const registerEvent = (event) => {
+    if (logLocal) {
+      logLocal =
+        logLocal[0] === '' ? [event.status] : [...logLocal, event.status];
+      console.log({ logLocal });
+    } else {
+      console.log('logLocal dont exist');
+    }
+    console.log(`Log: ${event.status}`);
+
+    setLog(logLocal);
+
+    // console.log({logCompleto: log});
   };
 
+  useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(OnespanBridgeAndroid);
+    const subscription = eventEmitter.addListener(
+      'onStatusEvent',
+      registerEvent
+    );
+    return () => subscription.remove();
+    // const subscription = subscribe(aff);
+    // return () => subscription.remove();
+  }, []);
+
   const setIdentifier = () => {
-    setAccountIdentifier(accountIdentifierUser, `.${accountIdentifierDomain}`);
     setIsIdentified(true);
   };
   const activateUser = () => {
-    startActivation(activationUser, activationPassword);
+    OnespanBridgeAndroid.setAccountIdentifier(
+      accountIdentifierUser,
+      `.${accountIdentifierDomain}`
+    );
+    OnespanBridgeAndroid.startActivation(activationUser, activationPassword);
+    setIsIdentified(false);
   };
 
   const IdentifierForm = () => (
@@ -50,35 +78,36 @@ const App = () => {
         onChangeText={(text) => setAccountIdentifierUser(text)}
         defaultValue={accountIdentifierUser}
       />
+      <Spacer />
       <TextInput
         onChangeText={(text) => setAccountIdentifierDomain(text)}
         defaultValue={accountIdentifierDomain}
       />
+      <Spacer />
       <Button onPress={setIdentifier}>Set Identifier</Button>
     </View>
   );
-
-  const ActivationForm = (): JSX.Element => {
-    return (
-      <View>
-        <TextInput
-          onChangeText={(text) => setActivationUser(text)}
-          defaultValue={activationUser}
-        />
-        <TextInput
-          onChangeText={(text) => setActivationPassword(text)}
-          defaultValue={activationPassword}
-        />
-        <Button onPress={activateUser}>Activate</Button>
-      </View>
-    );
-  };
-  const EventBox = () => (
+  const ActivationForm = () => (
     <View>
-      {log?.map((l, i) => (
-        <Text key={`${i}`}>{l}</Text>
-      ))}
+      <TextInput
+        onChangeText={(text) => setActivationUser(text)}
+        defaultValue={activationUser}
+      />
+      <Spacer />
+      <TextInput
+        onChangeText={(text) => setActivationPassword(text)}
+        defaultValue={activationPassword}
+      />
+      <Spacer />
+      <Button onPress={activateUser}>Activate</Button>
     </View>
+  );
+  const EventBox = () => (
+    <Eventbox>
+      {!!log &&
+        log.length > 0 &&
+        log.map((l, i) => <BoxText key={`${i}`}> &gt; {l}</BoxText>)}
+    </Eventbox>
   );
 
   return (

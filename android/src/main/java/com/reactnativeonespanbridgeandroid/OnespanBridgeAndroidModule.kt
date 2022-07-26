@@ -1,12 +1,9 @@
 package com.reactnativeonespanbridgeandroid
 
-import android.content.Intent
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import com.reactnativeonespanbridgeandroid.activation.ActivationActivity
-import com.reactnativeonespanbridgeandroid.di.start
-import com.reactnativeonespanbridgeandroid.utils.SessionHelper
+import com.reactnativeonespanbridgeandroid.settings.SessionHelper
 
 class OnespanBridgeAndroidModule(
   private val reactContext: ReactApplicationContext
@@ -19,8 +16,10 @@ class OnespanBridgeAndroidModule(
     accountIdentifier: String,
     cloudServerUrl: String
   ) {
-    currentActivity?.application?.let { start(it) }
+    // start koin modules
+//    currentActivity?.application?.let { start(it) }
 
+    // set session helper parameters
     SessionHelper.apply {
       this.accountIdentifier = accountIdentifier
       this.cloudServerUrl = cloudServerUrl
@@ -31,26 +30,26 @@ class OnespanBridgeAndroidModule(
   fun startActivation(userId: String, userPassword: String) {
     val activity = currentActivity
 
-    val intent = Intent(activity, ActivationActivity::class.java).apply {
-      putExtra("userId", userId)
-      putExtra("userPassword", userPassword)
-    }
-
-    activity?.startActivity(intent)
+//    val intent = Intent(activity, ActivationActivity::class.java).apply {
+//      putExtra("userId", userId)
+//      putExtra("userPassword", userPassword)
+//    }
+//
+//    activity?.startActivity(intent)
   }
 
   @ReactMethod
   fun addListener(eventName: String) {
-    val errorListener = ActivationActivity.statusListener
+//    val errorListener = ActivationActivity.statusListener
 
-    try {
+    /*try {
       errorListener.onStatusListener = {
         val params = Arguments.createMap().apply { putString("status", it) }
         sendEvent(reactContext, eventName, params)
       }
     } catch (e: Throwable) {
       Log.e("addListener", "Throwable: $e")
-    }
+    }*/
   }
 
   @ReactMethod
@@ -64,5 +63,4 @@ class OnespanBridgeAndroidModule(
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)
   }
-
 }

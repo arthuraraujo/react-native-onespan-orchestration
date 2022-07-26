@@ -1,6 +1,7 @@
 package com.reactnativeonespanbridgeandroid.utils
 
 import android.util.Log
+import com.reactnativeonespanbridgeandroid.settings.SessionHelper
 import java.util.concurrent.Callable
 
 class CommandSender(private val command: String) : Callable<String> {

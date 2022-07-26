@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "156610783435",
+    "project_id": "onespan-cb6e7",
+    "storage_bucket": "onespan-cb6e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156610783435:android:d492c7ab3259ee8faa534e",
+        "android_client_info": {
+          "package_name": "com.example.reactnativeonespanbridgeandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "156610783435-5lcbtoh8endb753k24bsher9lge9dtgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-kNu1O3NT7uRBMLwWeVUDQ9rDJQV8I6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "156610783435-5lcbtoh8endb753k24bsher9lge9dtgc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
